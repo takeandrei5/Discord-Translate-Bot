@@ -15,4 +15,4 @@ const translateFrenchCommandField = {
 	description: '**`Command which translates the given text to french.`**',
 } as Field;
 
-export { translateEnglishCommandField, translateGermanCommandField, translateFrenchCommandField };
+export default [translateEnglishCommandField, translateGermanCommandField, translateFrenchCommandField];

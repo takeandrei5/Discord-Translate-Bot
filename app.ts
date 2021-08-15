@@ -1,7 +1,7 @@
-import Discord, { MessageEmbed } from 'discord.js';
+import validateMessage from '@validators/message-validator';
+import Discord, { Message, MessageEmbed } from 'discord.js';
 
 import { mapCommand } from './src/bot-commands-handler';
-import validateMessage from '@validators/message-validator';
 
 require('dotenv').config();
 
@@ -11,16 +11,22 @@ client.on('ready', () => {
 	console.log(`Logged in as ${client.user!.tag}!`);
 });
 
-client.on('message', async (msg) => {
+client.on('message', async (msg: Message) => {
 	if (!validateMessage(msg)) {
 		return;
 	}
 
-	const translatedMessage: MessageEmbed | string | undefined = await mapCommand(msg.content);
+	try {
+		const translatedMessage: MessageEmbed | string = await mapCommand(msg.content);
 
-	if (translatedMessage) {
+		if (!translatedMessage) {
+			return `${msg.author.toString()}, I'm sorry, I couldn't translate that`;
+		}
+
 		const result: string = `${msg.author.toString()}, here is the translation: ${translatedMessage}`;
 		return msg.channel.send(result);
+	} catch (error) {
+		console.error('Encountered error: ', error);
 	}
 });
 
